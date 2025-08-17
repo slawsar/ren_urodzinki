@@ -244,6 +244,127 @@
             text-align: center;
         }
 
+        /* Style dla zdjęć z możliwością kliknięcia */
+        .clickable-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .clickable-image:hover {
+            transform: scale(1.05);
+            border-color: #f472b6;
+            box-shadow: 0 10px 30px rgba(244, 114, 182, 0.3);
+        }
+
+        .clickable-image::after {
+            content: '🔍';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .clickable-image:hover::after {
+            opacity: 1;
+        }
+
+        /* Modal/Lightbox */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            margin: auto;
+            animation: zoomIn 0.3s ease;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: auto;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 15px;
+            box-shadow: 0 20px 50px rgba(244, 114, 182, 0.5);
+        }
+
+        .close {
+            position: absolute;
+            top: -40px;
+            right: -10px;
+            color: #fff;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            background: rgba(244, 114, 182, 0.8);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover,
+        .close:focus {
+            background: rgba(244, 114, 182, 1);
+            transform: scale(1.1);
+        }
+
+        .modal-caption {
+            text-align: center;
+            color: #fff;
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            margin-top: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8) rotate(-5deg);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
         .wishes-section {
             background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(252, 231, 243, 0.9) 100%);
             backdrop-filter: blur(15px);
@@ -310,6 +431,7 @@
             border-radius: 15px;
             text-align: center;
             transition: transform 0.3s ease;
+            position: relative;
         }
 
         .plan-item:hover {
@@ -394,6 +516,19 @@
             .subtitle { font-size: 1.2rem; }
             .content-grid { grid-template-columns: 1fr; }
             .container { padding: 15px; }
+            
+            .modal-content {
+                max-width: 95%;
+                max-height: 95%;
+            }
+            
+            .close {
+                top: -30px;
+                right: 0;
+                font-size: 25px;
+                width: 35px;
+                height: 35px;
+            }
         }
 
         .photo-placeholder {
@@ -451,6 +586,15 @@
         <div class="sparkle-element" style="left: 78%; top: 75%; animation-delay: 1s;">⭐</div>
     </div>
 
+    <!-- Modal dla powiększonych zdjęć -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img class="modal-image" id="modalImage" src="" alt="">
+            <div class="modal-caption" id="modalCaption"></div>
+        </div>
+    </div>
+
     <div class="container">
         <header class="header">
             <h1 class="main-title birthday-decorations">Wszystkiego najlepszego, Renatko! <span class="sparkle">✨</span></h1>
@@ -465,21 +609,21 @@
             <div class="card" style="animation-delay: 0.2s;">
                 <span class="card-icon">🗺️</span>
                 <h3 class="card-title">Twoja Pasja do Podróży</h3>
-				<img src="Img/1.jpg" alt="Zdjęcie z podróży 📸" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px; margin-bottom: 20px;"></img>
+                <img src="Img/1.jpg" alt="Zdjęcie z podróży 📸" class="clickable-image" onclick="openModal(this)" data-caption="Nasze wspaniałe podróże razem 🌍✨">
                 <p class="card-content">Uwielbiasz odkrywać nowe miejsca i przeżywać niezapomniane przygody. Każda podróż z Tobą to magiczna historia, która zostaje w sercu na zawsze.</p>
             </div>
 
             <div class="card" style="animation-delay: 0.4s;">
                 <span class="card-icon">🚴‍♀️</span>
                 <h3 class="card-title">Nasze Rowerowe Przygody</h3>
-								<img src="Img/2.jpg" alt="Zdjęcie z wycieczki rowerowej 🚲" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px; margin-bottom: 20px;"></img>
+                <img src="Img/2.jpg" alt="Zdjęcie z wycieczki rowerowej 🚲" class="clickable-image" onclick="openModal(this)" data-caption="Wspólne wyprawy rowerowe pełne radości 🚴‍♀️💕">
                 <p class="card-content">Wspólne wyprawy rowerowe to nasze ulubione chwile - wiatr we włosach, uśmiech na twarzy i niekończące się rozmowy podczas pięknych tras.</p>
             </div>
 
             <div class="card" style="animation-delay: 0.6s;">
                 <span class="card-icon">👫</span>
                 <h3 class="card-title">Nasze Spacery</h3>
-				<img src="Img/3.jpg" alt="Wspólne zdjęcie ze spaceru 🌸" style="width: 100%; height: 200px; object-fit: cover; border-radius: 15px; margin-bottom: 20px;"></img>
+                <img src="Img/3.jpg" alt="Wspólne zdjęcie ze spaceru 🌸" class="clickable-image" onclick="openModal(this)" data-caption="Magiczne chwile naszych wspólnych spacerów 🌸👫">
                 <p class="card-content">Każdy spacer z Tobą to odkrywanie świata na nowo. Twoja ciekawość i radość sprawiają, że nawet zwykłe uliczki stają się wyjątkowe.</p>
             </div>
         </div>
@@ -515,8 +659,7 @@
                     <p class="plan-text">Wykwintny obiad<br>w wyjątkowym miejscu</p>
                 </div>
                 <div class="plan-item">
-				<img src="img/4.jpg" alt="Nasze wspólne zdjęcie" style="width: 100%; height: 150px; object-fit: cover; border-radius: 15px; margin-bottom: 15px;"></img>
-                    <div class="photo-placeholder" style="height: 150px; font-size: 1rem; margin-bottom: 15px;">Nasze wspólne zdjęcie 💕</div>
+                    <img src="img/4.jpg" alt="Nasze wspólne zdjęcie" class="clickable-image" onclick="openModal(this)" data-caption="Nasze wspólne zdjęcie z Gdańska 💕🏰" style="height: 150px; margin-bottom: 15px;">
                     <p class="plan-text">Wspólne zdjęcia<br>na pamiątkę</p>
                 </div>
             </div>
@@ -529,6 +672,72 @@
     </div>
 
     <script>
+        // Funkcje dla modal/lightbox
+        function openModal(img) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const captionText = document.getElementById('modalCaption');
+            
+            modal.classList.add('show');
+            modalImg.src = img.src;
+            captionText.innerHTML = img.getAttribute('data-caption') || img.alt;
+            
+            // Dodanie efektu confetti przy otwieraniu zdjęcia
+            createImageConfetti();
+            
+            // Blokada scrollowania
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('show');
+            
+            // Przywrócenie scrollowania
+            document.body.style.overflow = 'auto';
+        }
+
+        // Zamykanie modal przy kliknięciu poza zdjęciem
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Zamykanie modal klawiszem ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Specjalne confetti dla zdjęć
+        function createImageConfetti() {
+            const confettiElements = ['📸', '💖', '✨', '🌟', '🌸', '💕', '🎉', '🎊'];
+            for(let i = 0; i < 15; i++) {
+                const confetti = document.createElement('div');
+                confetti.innerHTML = confettiElements[Math.floor(Math.random() * confettiElements.length)];
+                confetti.style.position = 'fixed';
+                confetti.style.left = '50%';
+                confetti.style.top = '50%';
+                confetti.style.pointerEvents = 'none';
+                confetti.style.zIndex = '10000';
+                confetti.style.fontSize = '1.5rem';
+                
+                const randomX = (Math.random() - 0.5) * 400;
+                const randomY = (Math.random() - 0.5) * 400;
+                
+                confetti.style.animation = `imageConfettiPop 1.5s ease-out forwards`;
+                confetti.style.setProperty('--randomX', randomX + 'px');
+                confetti.style.setProperty('--randomY', randomY + 'px');
+                confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+                
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 2000);
+            }
+        }
+
         // Animacja serduszek i elementów urodzinowych
         function createFloatingElement() {
             const elements = ['💕', '🌸', '🎈', '✨', '🌟', '💖', '🌺', '🎂', '💫', '🌷'];
@@ -584,12 +793,21 @@
                 50% { transform: scale(1.2) translate(var(--randomX), var(--randomY)); opacity: 0.8; }
                 100% { transform: scale(0.8) translate(calc(var(--randomX) * 2), calc(var(--randomY) * 2)); opacity: 0; }
             }
+            
+            @keyframes imageConfettiPop {
+                0% { transform: scale(0) translate(-50%, -50%); opacity: 1; }
+                25% { transform: scale(1.5) translate(calc(-50% + var(--randomX) * 0.3), calc(-50% + var(--randomY) * 0.3)); opacity: 1; }
+                50% { transform: scale(1.2) translate(calc(-50% + var(--randomX) * 0.7), calc(-50% + var(--randomY) * 0.7)); opacity: 0.8; }
+                100% { transform: scale(0.5) translate(calc(-50% + var(--randomX)), calc(-50% + var(--randomY))); opacity: 0; }
+            }
         `;
         document.head.appendChild(style);
 
-        // Confetti przy kliknięciu w dowolne miejsce
+        // Confetti przy kliknięciu w dowolne miejsce (ale nie w modal)
         document.addEventListener('click', (e) => {
-            createConfetti(e.clientX, e.clientY);
+            if (!e.target.closest('.modal') && !e.target.classList.contains('clickable-image')) {
+                createConfetti(e.clientX, e.clientY);
+            }
         });
 
         // Efekt iskrzenia przy scrollowaniu
@@ -620,6 +838,23 @@
         document.querySelectorAll('.card').forEach(card => {
             observer.observe(card);
         });
-    </script>
-</body>
-</html>
+
+        // Dodatkowe efekty dla zdjęć
+        document.querySelectorAll('.clickable-image').forEach(img => {
+            img.addEventListener('mouseenter', function() {
+                // Delikatny efekt sparkle przy hover
+                const sparkle = document.createElement('div');
+                sparkle.innerHTML = '✨';
+                sparkle.style.position = 'absolute';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.pointerEvents = 'none';
+                sparkle.style.animation = 'twinkle 1s ease-out forwards';
+                sparkle.style.zIndex = '5';
+                
+                this.parentElement.style.position = 'relative';
+                this.parentElement.appendChild(sparkle);
+                
+                setTimeout(() => sparkle.remove(), 1000);
+            });
+        });
